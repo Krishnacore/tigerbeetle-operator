@@ -1,0 +1,92 @@
+apiVersion: database.tigerbeetle.com/v1alpha1
+kind: TigerBeetle
+metadata:
+  name: {{ include "tigerbeetle-cluster.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "tigerbeetle-cluster.labels" . | nindent 4 }}
+spec:
+  clusterId: {{ .Values.clusterId }}
+  replicas: {{ .Values.replicas }}
+  image:
+    repository: {{ .Values.image.repository }}
+    tag: {{ .Values.image.tag | quote }}
+    pullPolicy: {{ .Values.image.pullPolicy }}
+  storage:
+    size: {{ .Values.storage.size }}
+    {{- if .Values.storage.storageClassName }}
+    storageClassName: {{ .Values.storage.storageClassName | quote }}
+    {{- end }}
+    {{- with .Values.storage.labels }}
+    labels:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.storage.annotations }}
+    annotations:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+  {{- with .Values.resources }}
+  resources:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if .Values.serviceAccountName }}
+  serviceAccountName: {{ .Values.serviceAccountName }}
+  {{- end }}
+  {{- with .Values.imagePullSecrets }}
+  imagePullSecrets:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.securityContext }}
+  securityContext:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.nodeSelector }}
+  nodeSelector:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.tolerations }}
+  tolerations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.affinity }}
+  affinity:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if .Values.podAntiAffinity.type }}
+  podAntiAffinity:
+    type: {{ .Values.podAntiAffinity.type }}
+    topologyKey: {{ .Values.podAntiAffinity.topologyKey }}
+    weight: {{ .Values.podAntiAffinity.weight }}
+  {{- end }}
+  {{- if .Values.topologySpreadConstraints.enabled }}
+  topologySpreadConstraints:
+    maxSkew: {{ .Values.topologySpreadConstraints.maxSkew }}
+    topologyKey: {{ .Values.topologySpreadConstraints.topologyKey }}
+    whenUnsatisfiable: {{ .Values.topologySpreadConstraints.whenUnsatisfiable }}
+  {{- end }}
+  {{- if .Values.priorityClassName }}
+  priorityClassName: {{ .Values.priorityClassName }}
+  {{- end }}
+  service:
+    type: {{ .Values.service.type }}
+    port: {{ .Values.service.port }}
+    {{- with .Values.service.annotations }}
+    annotations:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+  {{- with .Values.env }}
+  env:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.args }}
+  args:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.podAnnotations }}
+  podAnnotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.podLabels }}
+  podLabels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}

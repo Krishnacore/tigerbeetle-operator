@@ -1,0 +1,27 @@
+apiVersion: database.tigerbeetle.com/v1alpha1
+kind: TigerBeetle
+metadata:
+  labels:
+    app.kubernetes.io/name: tigerbeetle-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: tigerbeetle-sample
+spec:
+  clusterId: 0
+  replicas: 3
+  image:
+    repository: ghcr.io/krishnacore/tigerbeetle
+    tag: latest
+    pullPolicy: IfNotPresent
+  storage:
+    size: 10Gi
+  service:
+    type: ClusterIP
+    port: 3000
+  podAntiAffinity:
+    type: soft
+    topologyKey: kubernetes.io/hostname
+    weight: 100
+  topologySpreadConstraints:
+    maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway

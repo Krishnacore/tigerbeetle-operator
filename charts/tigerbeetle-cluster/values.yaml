@@ -1,0 +1,66 @@
+nameOverride: ""
+fullnameOverride: ""
+
+clusterId: 0
+
+replicas: 3
+
+image:
+  repository: ghcr.io/krishnacore/tigerbeetle
+  tag: latest
+  pullPolicy: IfNotPresent
+
+storage:
+  size: 10Gi
+  storageClassName: ""
+  labels: {}
+  annotations: {}
+
+resources: {}
+  # limits:
+  #   cpu: 1000m
+  #   memory: 2Gi
+  # requests:
+  #   cpu: 500m
+  #   memory: 1Gi
+
+serviceAccountName: ""
+
+imagePullSecrets: []
+
+securityContext: {}
+  # runAsNonRoot: true
+  # runAsUser: 1000
+  # fsGroup: 1000
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+podAntiAffinity:
+  type: soft
+  topologyKey: kubernetes.io/hostname
+  weight: 100
+
+topologySpreadConstraints:
+  enabled: false
+  maxSkew: 1
+  topologyKey: topology.kubernetes.io/zone
+  whenUnsatisfiable: ScheduleAnyway
+
+priorityClassName: ""
+
+service:
+  type: ClusterIP
+  port: 3000
+  annotations: {}
+
+env: []
+
+args: []
+
+podAnnotations: {}
+
+podLabels: {}
