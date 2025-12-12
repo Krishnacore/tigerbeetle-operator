@@ -95,6 +95,7 @@ func (r *TigerBeetleReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		if err := r.Update(ctx, tb); err != nil {
 			return ctrl.Result{}, err
 		}
+		return ctrl.Result{Requeue: true}, nil
 	}
 
 	r.setDefaults(tb)
@@ -108,23 +109,35 @@ func (r *TigerBeetleReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	})
 
 	if err := r.reconcileServiceAccount(ctx, tb); err != nil {
+		if errors.IsConflict(err) {
+			return ctrl.Result{Requeue: true}, nil
+		}
 		log.Error(err, "Failed to reconcile ServiceAccount")
 		return r.setDegradedCondition(ctx, tb, err)
 	}
 
 	if err := r.reconcileService(ctx, tb); err != nil {
+		if errors.IsConflict(err) {
+			return ctrl.Result{Requeue: true}, nil
+		}
 		log.Error(err, "Failed to reconcile Service")
 		return r.setDegradedCondition(ctx, tb, err)
 	}
 
 	if err := r.reconcileStatefulSet(ctx, tb); err != nil {
+		if errors.IsConflict(err) {
+			return ctrl.Result{Requeue: true}, nil
+		}
 		log.Error(err, "Failed to reconcile StatefulSet")
 		return r.setDegradedCondition(ctx, tb, err)
 	}
 
 	if err := r.updateStatus(ctx, tb); err != nil {
+		if errors.IsConflict(err) {
+			return ctrl.Result{Requeue: true}, nil
+		}
 		log.Error(err, "Failed to update status")
-		return ctrl.Result{RequeueAfter: 10 * time.Second}, err
+		return ctrl.Result{Requeue: true}, nil
 	}
 
 	return ctrl.Result{RequeueAfter: 30 * time.Second}, nil
@@ -154,19 +167,19 @@ func (r *TigerBeetleReconciler) setDefaults(tb *databasev1alpha1.TigerBeetle) {
 	}
 }
 
-func (r *TigerBeetleReconciler) setDegradedCondition(ctx context.Context, tb *databasev1alpha1.TigerBeetle, err error) (ctrl.Result, error) {
+func (r *TigerBeetleReconciler) setDegradedCondition(ctx context.Context, tb *databasev1alpha1.TigerBeetle, reconcileErr error) (ctrl.Result, error) {
 	meta.SetStatusCondition(&tb.Status.Conditions, metav1.Condition{
 		Type:               typeDegraded,
 		Status:             metav1.ConditionTrue,
 		Reason:             "ReconcileError",
-		Message:            err.Error(),
+		Message:            reconcileErr.Error(),
 		LastTransitionTime: metav1.Now(),
 	})
 	tb.Status.Phase = "Degraded"
 	if statusErr := r.Status().Update(ctx, tb); statusErr != nil {
 		return ctrl.Result{}, statusErr
 	}
-	return ctrl.Result{RequeueAfter: 10 * time.Second}, err
+	return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 }
 
 func (r *TigerBeetleReconciler) reconcileServiceAccount(ctx context.Context, tb *databasev1alpha1.TigerBeetle) error {
