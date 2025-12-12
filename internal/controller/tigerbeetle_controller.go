@@ -20,7 +20,6 @@ import (
 	"context"
 	"fmt"
 	"strconv"
-	"strings"
 	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -375,13 +374,6 @@ fi`
 }
 
 func (r *TigerBeetleReconciler) buildStartCommand(tb *databasev1alpha1.TigerBeetle) string {
-	var addressParts []string
-	for i := int32(0); i < tb.Spec.Replicas; i++ {
-		addressParts = append(addressParts,
-			fmt.Sprintf("%s-%d.%s.%s.svc.cluster.local:%d",
-				tb.Name, i, tb.Name, tb.Namespace, tigerBeetlePort))
-	}
-
 	return fmt.Sprintf(`set -ex
 REPLICA=${HOSTNAME##*-}
 FMT_CLUSTER=$(printf "%%010d" $CLUSTER)
@@ -551,9 +543,4 @@ func (r *TigerBeetleReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Owns(&corev1.ServiceAccount{}).
 		Named("tigerbeetle").
 		Complete(r)
-}
-
-// Helper to join strings
-func join(parts []string, sep string) string {
-	return strings.Join(parts, sep)
 }
