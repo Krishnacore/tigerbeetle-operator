@@ -3,10 +3,10 @@ entries:
   tigerbeetle-cluster:
   - apiVersion: v2
     appVersion: 0.1.0
-    created: "2025-12-12T19:54:35.39899885Z"
+    created: "2025-12-12T20:49:59.545037405Z"
     description: A Helm chart for deploying TigerBeetle clusters via the TigerBeetle
       Operator
-    digest: 4895c3cc00040574ba10f878772811f2169df25989df23c73cf5e3c2985d2caf
+    digest: efd82808961bcf91a264729088e9a1558e9d375fa6c0d5ee23aea14c160f7352
     keywords:
     - tigerbeetle
     - database
@@ -19,6 +19,23 @@ entries:
     - https://Krishnacore.github.io/tigerbeetle-operator/tigerbeetle-cluster-0.1.0.tgz
     version: 0.1.0
   tigerbeetle-operator:
+  - apiVersion: v2
+    appVersion: 0.1.1
+    created: "2025-12-12T20:49:59.545639703Z"
+    description: A Helm chart for deploying the TigerBeetle Kubernetes Operator
+    digest: c269644b224bb27566fad142c8cebe28bf450fddf4d2683957fd31e2844e1760
+    keywords:
+    - tigerbeetle
+    - operator
+    - database
+    - kubernetes
+    maintainers:
+    - name: krishnacore
+    name: tigerbeetle-operator
+    type: application
+    urls:
+    - https://Krishnacore.github.io/tigerbeetle-operator/tigerbeetle-operator-0.1.1.tgz
+    version: 0.1.1
   - apiVersion: v2
     appVersion: 0.1.0
     created: "2025-12-12T19:54:35.399575413Z"
@@ -36,4 +53,4 @@ entries:
     urls:
     - https://Krishnacore.github.io/tigerbeetle-operator/tigerbeetle-operator-0.1.0.tgz
     version: 0.1.0
-generated: "2025-12-12T19:54:35.398604012Z"
+generated: "2025-12-12T20:49:59.544625774Z"
