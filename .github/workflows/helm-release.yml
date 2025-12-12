@@ -43,21 +43,17 @@ jobs:
             helm package "$chart" -d .cr-release-packages
           done
 
-      - name: Checkout gh-pages branch
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          path: gh-pages
-        continue-on-error: true
-
-      - name: Create gh-pages branch if not exists
+      - name: Setup gh-pages directory
         run: |
-          if [ ! -d "gh-pages" ]; then
-            mkdir gh-pages
-            cd gh-pages
-            git init
-            git checkout -b gh-pages
-            git remote add origin https://github.com/${{ github.repository }}.git
+          mkdir -p gh-pages
+          cd gh-pages
+          git init
+          git remote add origin https://github.com/${{ github.repository }}.git
+          git fetch origin gh-pages --depth=1 || true
+          if git rev-parse --verify origin/gh-pages >/dev/null 2>&1; then
+            git checkout -b gh-pages origin/gh-pages
+          else
+            git checkout --orphan gh-pages
           fi
 
       - name: Update Helm repo index
